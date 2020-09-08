@@ -1,0 +1,34 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Get user authorization token
+    uri:
+      url: "{{ grid_admin_base_url }}api/v3/authorize"
+      method: POST
+      body: {
+        "username": "{{ grid_user }}",
+        "password": "{{ grid_pass }}",
+        "cookie": false,
+        "csrfToken": false
+      }
+      body_format: json
+      validate_certs: false
+    register: auth
+    no_log: false
+  - name: print auth token
+    debug:
+      msg: "{{ auth.json.data }}"
+
+  - name: create a group
+    netapp.storagegrid.nac_sg_grid_group:
+      api_url: "{{ grid_admin_base_url }}"
+      auth_token: "{{ auth.json.data }}"
+      validate_certs: false
+      state: present
+      display_name: ansiblegroup100
+      unique_name: group/ansiblegroup100
+      management_policy:
+        tenant_accounts: true
+        maintenance: true
+        root_access: false

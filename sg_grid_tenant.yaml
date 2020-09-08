@@ -1,0 +1,36 @@
+---
+- hosts: all
+  gather_facts: no
+  tasks:
+  - name: Get user authorization token
+    uri:
+      url: "{{ grid_admin_base_url }}api/v3/authorize"
+      method: POST
+      body: {
+        "username": "{{ grid_user }}",
+        "password": "{{ grid_pass }}",
+        "cookie": false,
+        "csrfToken": false
+      }
+      body_format: json
+      validate_certs: false
+    register: auth
+    no_log: false
+
+  - name: print auth token
+    debug:
+      msg: "{{ auth.json.data }}"
+
+  - name: create a sg tenant
+    netapp.storagegrid.na_sg_grid_account:
+      api_url: "{{ grid_admin_base_url }}"
+      auth_token: "{{ auth.json.data }}"
+      validate_certs: false
+      state: present
+      name: demotenant55
+      protocol: s3
+      management: true
+      use_own_identity_source: true
+      allow_platform_services: false
+      password: netapp01
+      quota_bytes: 1000000000000
