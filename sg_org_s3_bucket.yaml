@@ -28,4 +28,4 @@
       auth_token: "{{ auth.json.data }}"
       validate_certs: false
       state: present
-      name: ansiblebucket1
+      name: "{{ bucket_name }}"
