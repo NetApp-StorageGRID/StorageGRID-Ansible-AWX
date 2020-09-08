@@ -23,7 +23,7 @@
       msg: "{{ auth.json.data }}"
 
   - name: create a s3 bucket
-    netapp.storagegrid.nac_sg_org_containe:
+    netapp.storagegrid.nac_sg_org_container:
       api_url: "{{ grid_admin_base_url }}"
       auth_token: "{{ auth.json.data }}"
       validate_certs: false
